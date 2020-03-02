@@ -27,8 +27,8 @@ Vout = R*qc_grad;
 
 %obtaining plot
 plot(t, Vout);
-xlabel('Time');
-ylabel('Potential Difference');
+xlabel('Time (s)');
+ylabel('Potential Differencev (V)');
 hold on;
 
 
@@ -40,7 +40,7 @@ function [yout] = y(t, qc, qc_grad)
     R = 250;
     L = 600*10^(-3);
     C = 3.5*10^(-6);
-    yout = (Vin3(t) - (qc/C) - (R*qc_grad))/L;
+    yout = (Vin4(t) - (qc/C) - (R*qc_grad))/L;
 end
 
 % (1) heaviside Vin
