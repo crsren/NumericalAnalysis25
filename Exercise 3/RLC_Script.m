@@ -1,4 +1,3 @@
-R = 250;
 %Setting up the T domain
 h = 0.1;
 tf = 2;
@@ -11,26 +10,15 @@ qc_grad = zeros(1,N);
 Vout = zeros(1,N);
 t = zeros(1,N);
 t(1) = t0;
-F1 = @f1;
-F2 = @f2;
+F = @f2;
 
-for i=1: (length(t)-1)
-    t(i+1) = t(i)+h;        %not needed currently for later
-end
-
-[qc, qc_grad]= RK4(F1, F2, h, t, qc, qc_grad);
+[t, qc, qc_grad]= RK4(F, h, t, qc, qc_grad);
 
 Vout = R*qc_grad;
 
 plot(t, Vout);
-set(gca, 'YScale', 'log')
 xlabel('Time');
 ylabel('Potential Difference');
-
-   
-function [yout] = f1(time, qc, qc_grad)
-    yout = qc_grad;
-end
 
 function [yout] = f2(time, qc, qc_grad)
     R = 250;
