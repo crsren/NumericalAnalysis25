@@ -1,7 +1,7 @@
 t_i = 0; % set initial value of t_0
 q_i = 500e-9; % set q_initial condition q at t_0
 h = 0.00001; % set t step-size
-t_f = 0.001; % stop here
+t_f = 0.01; % stop here
 R = 1000; % resistance
 C = 100e-9; % capacitance
 
@@ -57,9 +57,9 @@ C = 100e-9; % capacitance
 % plot(tout, qout, 'b') %plot now values of x,y
 % 
 % figure; % use this if you want the exact solution and the numerical on different figures
-% % %hold on; % use this if you want the exact solution and the numerical on the same figure
+% %hold on; % use this if you want the exact solution and the numerical on the same figure
 % 
-% qexact = 2.5*tau*C/(tau - R*C)*(exp(-tout/tau) - exp(-tout/(R*C))) + q_i*exp(-tout/(R*C)); %calculate exact solution
+% qexact = 2.5*C*period/(period^2 + (2*pi*R*C)^2)*(period*sin(2*pi/period*tout) - 2*pi*C*R*cos(2*pi/period*tout)) + (q_i + (2.5*C^2*period*2*pi*R)/(period^2 + (2*pi*C*R)^2))*exp(-tout/(R*C)); %calculate exact solution
 % plot(tout, qexact, 'r') %plot now values of x,y
 % %*****************************************************
 
