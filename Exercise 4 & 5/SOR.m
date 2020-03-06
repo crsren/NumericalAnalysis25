@@ -1,22 +1,12 @@
 % Successive over-relaxation
 
-function [iterations] = SOR(a) % input: alpha weighting of residue
-
-% d2u/dx2 + d2u/dy2 = g(x,y) → Poisson Equation
-% Case g(x,y) = 0 → Laplace Equation
-g = @(x,y) 0; % !! Poisson eqn other than Laplace not working yet !!
-
+function [iterations] = SOR(a,h,n,m,Ui_min,Ui_max,Umin_j,Umax_j,g) % input: alpha weighting of residue
+    
 % Initialize grid (all zero)
-h = 0.1; n = 100; m = 100;
 x = 0:h:h*n;
 y = 0:h:h*m;
 U = zeros(n+1,m+1);
 
-% Set boundary conditions
-Ui_min = @(x) x;
-Ui_max = @(x) x;
-Umin_j = @(y) y;
-Umax_j = @(y) y;
 
 for i = 1 : length(x)
     U(i ,1) = Ui_min(i);
@@ -72,4 +62,3 @@ disp("Done after " + iterations + " iterations.");
 % 
 % figure; contour(X,Y,U); % from above
 % %figure; meshc(X,Y,U) %mesh: contour + surf
-
