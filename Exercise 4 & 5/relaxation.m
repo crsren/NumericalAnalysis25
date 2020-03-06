@@ -6,6 +6,10 @@
 
 close all ; clc
 
+% d2u/dx2 + d2u/dy2 = g(x,y) → Poisson Equation
+% Case g(x,y) = 0 → Laplace Equation
+g = @(x,y) 0; 
+
 % Initialize grid (all zero)
 h = 0.1; n = 20; m = 20;
 x = 0:h:h*n;
@@ -13,13 +17,18 @@ y = 0:h:h*m;
 U = zeros(n+1,m+1);
 
 % Set boundary conditions
+Ui_min = @(x) x;
+Ui_max = @(x) x;
+Umin_j = @(y) y;
+Umax_j = @(y) y;
+
 for i = 1 : length(x)
-    U(i ,1) = (i-11)^2-100;
-    U(i,length(y)) = (i-11)^2-100;
+    U(i ,1) = Ui_min(i);
+    U(i,length(y)) = Ui_max(i);
 end
 for j = 1 : length(y)
-    U(1, j) = -(j-11)^2+100;
-    U(length(x), j) = -(j-11)^2+100;
+    U(1, j) = Umin_j(j);
+    U(length(x), j) = Umax_j(j);
 end
 
 % Define termination condition Ɛ (maximum error)
@@ -36,7 +45,7 @@ while ~precise
         for j = 2 : length(y)-1
             
             % Calculate residue r
-            r = ( U(i+1,j) + U(i-1,j) + U(i,j+1) + U(i,j-1) - 4*U(i,j) ) / (4);
+            r = ( U(i+1,j) + U(i-1,j) + U(i,j+1) + U(i,j-1) - 4*U(i,j) - (h^2)*g(i,j) ) / (4);
             U(i,j) = U(i,j) + r;
             
             if abs(r) >= epsilon
