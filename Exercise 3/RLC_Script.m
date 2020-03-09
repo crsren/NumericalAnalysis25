@@ -21,7 +21,7 @@ F2 = @z;
 plot(t, Vout);
 xlabel('Time (s)');
 ylabel('Potential Differencev (V)');
-title('Step signal with Vin = 5V')
+title('Sine wave with amplitude = 5V')
 hold on;
 
 
@@ -32,10 +32,10 @@ end
 
 %change number after Vin for different imput signals shown below
 function [yout] = y(t, qc, qc_grad)
-    R = 250;
+    R = 10000;
     L = 600*10^(-3);
     C = 3.5*10^(-6);
-    yout = (Vin1(t) - (qc/C) - (R*qc_grad))/L;
+    yout = (Vin4(t) - (qc/C) - (R*qc_grad))/L;
 end
 
 % (1) heaviside Vin
@@ -57,7 +57,7 @@ end
 
 % (4) sine wave
 function [volt_out] = Vin4(time)
-    freq = 5;
+    freq = 500;
     volt_out = 5*sin(2*pi*freq*time);
 end
 
