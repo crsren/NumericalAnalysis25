@@ -6,7 +6,7 @@
 
 close all ; clc
 
-alpha = (0.5:0.1:2.1);
+alpha = 1;%(0.5:0.1:2.1);
 outputs = zeros(1, length(alpha));
 
 % d2u/dx2 + d2u/dy2 = g(x,y)

@@ -9,12 +9,12 @@ U = zeros(n+1,m+1);
 
 
 for i = 1 : length(x)
-    U(i ,1) = Ui_min(i);
-    U(i,length(y)) = Ui_max(i);
+    U(i ,1) = Ui_min(x(i));
+    U(i,length(y)) = Ui_max(x(i));
 end
 for j = 1 : length(y)
-    U(1, j) = Umin_j(j);
-    U(length(x), j) = Umax_j(j);
+    U(1, j) = Umin_j(y(j));
+    U(length(x), j) = Umax_j(y(j));
 end
 
 % Define termination condition Ɛ (maximum error)
@@ -57,7 +57,7 @@ disp("Done after " + iterations + " iterations.");
 
 % % Plotting
 % [X,Y] = meshgrid(x,y);
-% figure; surf(X,Y,U); % 3D
+figure; surf(X,Y,U); % 3D
 % xlabel('x'); ylabel('y'); zlabel('Potential in Volts');
 % 
 % figure; contour(X,Y,U); % from above
