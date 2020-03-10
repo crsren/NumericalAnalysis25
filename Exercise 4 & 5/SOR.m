@@ -3,8 +3,8 @@
 function [iterations] = SOR(a,h,n,m,Ui_min,Ui_max,Umin_j,Umax_j,g) % input: alpha weighting of residue
     
 % Initialize grid (all zero)
-x = 0:h:h*n;
-y = 0:h:h*m;
+x = 0:h:n;
+y = 0:h:m;
 U = zeros(n+1,m+1);
 
 
@@ -18,7 +18,7 @@ for j = 1 : length(y)
 end
 
 % Define termination condition Ɛ (maximum error)
-epsilon = 1e-2;
+epsilon = 1e-4;
 % Define timeout (maximum iterations)
 timeout = 10000;
 
@@ -52,13 +52,13 @@ while ~precise
     %disp(iterations)
 end
 
-disp("Done after " + iterations + " iterations.");
-
-
+disp("Done after " + iterations + " iterations (α = " + a + ")");
 % % Plotting
 % [X,Y] = meshgrid(x,y);
-figure; surf(X,Y,U); % 3D
-% xlabel('x'); ylabel('y'); zlabel('Potential in Volts');
+% figure; surf(X,Y,U); % 3D
+% xlabel('x'); ylabel('y'); zlabel('U(x,y)'); title("α = " + a);
+
+
 % 
 % figure; contour(X,Y,U); % from above
 % %figure; meshc(X,Y,U) %mesh: contour + surf

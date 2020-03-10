@@ -14,10 +14,10 @@ y = 0:h:m;
 U = zeros(length(x),length(y));
 
 % Set boundary conditions
-Ui_min = @(x) 1;
-Ui_max = @(x) 0;%sin(12*pi*x);
-Umin_j = @(y) 0;%sin(20*pi*y);
-Umax_j = @(y) 0;%sin(2*pi*y);
+Ui_min = @(x) discon(x);
+Ui_max = @(x) discon(x);
+Umin_j = @(y) discon(y);
+Umax_j = @(y) discon(y);
 
 for i = 1 : length(x)
     U(i ,1) = Ui_min(x(i));
@@ -78,3 +78,14 @@ view(-85,5);
 % title("Resolution h = 0.01");
 % view(-70,20);
 %saveas(gcf,'h001_mesh.png');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%Fn for special boundary condition with non-corner discontinuity
+function [yy] = discon(xx)
+    if(xx < 0.5)
+        yy = 0;
+    else 
+        yy = 1;
+    end
+end
