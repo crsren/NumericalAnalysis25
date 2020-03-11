@@ -20,7 +20,7 @@ V = 5.0; %amplitude (voltage).
 %*********************************************
 
 %*****************Random RK2******************
-      a = 0.3;
+%      a = 0.3;
 %*********************************************
 
 
@@ -35,21 +35,30 @@ qcExact = ( exp(-tout/(R*C)) .* ( C^2 * w^2 * R^2 + 2000000 * C^2 * w * R * V * 
 % MY GOD this exact solution was hard. I better get the nobel prize for
 % this.
 
-error = qout - qcExact; % get the error between the numerical and the exact one.
+error = abs(qout - qcExact); % get the error between the numerical and the exact one.
 
 plot(tout, qout, 'b'); %plot the numerical graph and make sure it comes up and 'holds' so we can compare.
+ylabel("qc(t)");
+xlabel("t");
 title("numerical");
 figure;
 
 plot(tout, qcExact, 'r'); %now plot the exact graph
+ylabel("qc(t)");
+xlabel("t");
 title("exact");
 figure;
 
 plot(tout, error); %now plot the error 
+ylabel("error");
+xlabel("t");
 title("error");
 figure;
 
 loglog(tout, error); %now plot the error using a log-log plot to see that mag.
+ylabel("log(error)");
+xlabel("log(t)");
+
 title("loglog");
 
 
