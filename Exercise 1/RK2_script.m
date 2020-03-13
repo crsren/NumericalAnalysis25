@@ -41,7 +41,7 @@ C = 100e-9; % capacitance
 % figure; % use this if you want the exact solution and the numerical on different figures
 % % %hold on; % use this if you want the exact solution and the numerical on the same figure
 % 
-% qexact = 2.5*tau*C/(tau - R*C)*(exp(-tout/tau) - exp(-tout/(R*C))) + q_i*exp(-tout/(R*C)); %calculate exact solution
+% qexact = 2.5 * tout * exp(-tout/(R*C)) / (R*C) + 5 * exp(-tout/(R*C)); %calculate exact solution
 % plot(tout, qexact, 'r') %plot now values of x,y
 % %*****************************************************
 
