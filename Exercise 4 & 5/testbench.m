@@ -7,7 +7,7 @@
 %close all ; clc
 figure;
 
-alpha = (0.8:0.05:2);
+alpha = horzcat((0.8:0.1:1.4),(1.42:0.02:2));
 outputs = zeros(1, length(alpha));
 timeout = 10000;
 

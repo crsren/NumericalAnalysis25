@@ -1,11 +1,7 @@
-% Normal relaxation method
-% later: function [iterations,U] = relaxation(h,n,m,epsilon,Ui_min,Ui_max,Umin_j,Umax_j)
-
 close all ; clc
 
 % d2u/dx2 + d2u/dy2 = g(x,y) → Poisson Equation
-% Case g(x,y) = 0 → Laplace Equation
-g = @(x,y) 0; % !! Poisson eqn other than Laplace not working yet !!
+g = @(x,y) 0;
 
 % Initialize grid (all zero)
 h = 0.01;n = 1; m = 1;
@@ -14,10 +10,10 @@ y = 0:h:m;
 U = zeros(length(x),length(y));
 
 % Set boundary conditions
-Ui_min = @(x) 1;
-Ui_max = @(x) 0;%sin(12*pi*x);
-Umin_j = @(y) 0;%sin(20*pi*y);
-Umax_j = @(y) 0;%sin(2*pi*y);
+Ui_min = @(x) x;
+Ui_max = @(x) x;
+Umin_j = @(y) y;
+Umax_j = @(y) y;
 
 for i = 1 : length(x)
     U(i ,1) = Ui_min(x(i));
@@ -31,10 +27,10 @@ end
 % Define termination condition Ɛ (maximum error)
 epsilon = 1e-4;
 
-% Apply relexation method on all interior points until the residue r < Ɛ
 iterations = -1; % counter
 precise = false;
 
+% Apply relexation method on all interior points until the residue r < Ɛ
 while ~precise
     precise = true;
     
@@ -46,7 +42,6 @@ while ~precise
             U(i,j) = U(i,j) + r;
             
             if abs(r) >= epsilon
-                %disp(r);
                 precise = false;
             end
             
@@ -54,27 +49,14 @@ while ~precise
     end
     
     iterations = iterations+1;
-    %disp(iterations)
 end
 
 disp("Done after " + iterations + " iterations with " + (length(x)-2)^2 + " calculations each.");
 
-
-
 % Plotting
 [X,Y] = meshgrid(x,y);
 figure; surf(X,Y,U); % 3D
-xlabel('x'); ylabel('y'); zlabel('U(x,y)');
-%title("Resolution h = 0.01");
-%view(0,90);
-%saveas(gcf,'e1flat.png');
-view(-85,5);
-%saveas(gcf,'h001.png');
-
-% figure; contour(X,Y,U); % from above
-% xlabel('x'); ylabel('y'); zlabel('U(x,y)');
 %figure; meshc(X,Y,U) %mesh: contour + surf
-% xlabel('x'); ylabel('y'); zlabel('U(x,y)');
-% title("Resolution h = 0.01");
-% view(-70,20);
-%saveas(gcf,'h001_mesh.png');
+xlabel('x'); ylabel('y'); zlabel('U(x,y)');
+title("Resolution h = 0.01");
+view(-70,20); saveas(gcf,'h001.png');
