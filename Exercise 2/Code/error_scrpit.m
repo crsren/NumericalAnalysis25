@@ -1,44 +1,47 @@
 clear;
-R = 1000; %resistance.
-C = 100/1000000000; %capacitance.
-qc0 = 500/1000000000; %charge at t0.
+R = 1e3; %resistance.
+C = 100 * 1e-9; %capacitance.
+qc0 = 500 * 1e-9; %charge at t0.
 t0 = 0; %value of time when time is zero (obviously).
 h = 0.00001; %step size.
 tf = 0.001; %interval [0, 0.01].
 
-T = 100/1000000; %period of T (1/T = frequency). 2pi*frequency = rotationshstighet (angular frequency?).
-freq = 1/T; % frequency 
-w = 2 * pi * freq; %angular frequency
-% V = 5.0; %amplitude (voltage).
-V = 2.5;
-
 
 %****************Heun's Method****************
-%       a = 0.5;
+a = 0.5;
 %*********************************************
 
 %***************Midpoint Method***************
-%      a = 0.0;
+% a = 0.0;
 %*********************************************
 
 %*****************Random RK2******************
-     a = 0.3;
+% a = 0.3;
 %*********************************************
 
 
+%*****************Sinusoidal Input Signal******************
+V = 5.0; %amplitude (voltage).
+T = 100 * 1e-6; %period of T (1/T = frequency). 2pi*frequency = rotationshstighet (angular frequency?).
+freq = 1/T; % frequency 
+w = 2 * pi * freq; %angular frequency
+Vi = @(t) V * cos(w*t); %input cosine wave with given values.
+%**********************************************************
 
-% Vi = @(t) V * cos(w*t); %input cosine wave with given values.
-% Vi = @(t) V * heaviside(t); %input step signal
-tau = 1e-4;
-Vi = @(t) V * exp(-t/tau);
+%*****************Decay Input Signal******************
+% V = 2.5;
+% tau = 100 * 1e-6;
+% Vi = @(t) V * exp(-t/tau);
+%*****************************************************
 
 qcFunc = @(t, qc) ( Vi(t)/R ) - ( 1/(R*C) ) * qc; %we get the d/dt of qc (derivative).
 
 [tout, qout] = RK2(qcFunc, t0, qc0, h, a, tf); %Numerical method
 
-% qcExact = ( exp(-tout/(R*C)) .* ( C^2 * w^2 * R^2 + 2000000 * C^2 * w * R * V * exp(tout/(R*C)) .* sin(w*tout) + 2000000 * C * V * exp(tout/(R*C)) .* cos(w*tout) - 2000000 * C * V + 1 ) ) ./ (2000000 * (C^2 * w^2 * R^2 + 1));
-% qcExact = 2.5 * C * ( 1 + exp(-tout/(R*C)) ); %step signal exact solution
-qcExact = 2.5 * tout .* exp(-tout/(R*C)) / R + 5 * C * exp(-tout/(R*C)); %decay signal exact solution
+%*****************Exact Solutions of the 2 Input Signal******************
+qcExact = ( exp(-tout/(R*C)) .* ( C^2 * w^2 * R^2 + 2000000 * C^2 * w * R * V * exp(tout/(R*C)) .* sin(w*tout) + 2000000 * C * V * exp(tout/(R*C)) .* cos(w*tout) - 2000000 * C * V + 1 ) ) ./ (2000000 * (C^2 * w^2 * R^2 + 1));
+% qcExact = V * tout .* exp(-tout/(R*C)) / R + 2 * V * C * exp(-tout/(R*C));
+%************************************************************************
 
 error = qcExact - qout; % get the error between the numerical and the exact one.
 
@@ -49,18 +52,18 @@ hold on;
 plot(tout, error, 'g'); %now plot the error 
 ylabel("qc(t)");
 xlabel("t");
-% title("Heun's Method: Error Analysis");
+title("Heun's Method: Error Analysis");
 % title("Midpoint Method: Error Analysis");
-title("Random Method: Error Analysis");
+% title("Random Method: Error Analysis");
 legend("Numerical Solution", "Exact Solution", "Approximation Error");
 figure;
 
 plot(tout, error, 'g'); %now plot the error 
 ylabel("Error");
 xlabel("t");
-% title("Heun's Method: Error Analysis");
+title("Heun's Method: Error Analysis");
 % title("Midpoint Method: Error Analysis");
-title("Random Method: Error Analysis");
+% title("Random Method: Error Analysis");
 figure;
 
 
@@ -78,11 +81,14 @@ figure;
 for i = 16:25
     
     step = 2^(-i); %Trying different step sizes (h).
-    [etout, eqout] = RK2(qcFunc, t0, qc0, step, a, tf); %RK2 functions with different step size h. added extra e for fun and syntax.
-%     qcExact = ( exp(-etout/(R*C)) .* ( C^2 * w^2 * R^2 + 2000000 * C^2 * w * R * V * exp(etout/(R*C)) .* sin(w*etout) + 2000000 * C * V * exp(etout/(R*C)) .* cos(w*etout) - 2000000 * C * V + 1 ) ) ./ (2000000 * (C^2 * w^2 * R^2 + 1));
-%     qcExact = 2.5 * C * ( 1 + exp(-etout/(R*C)) ); %step signal exact solution
-    qcExact = 2.5 * etout .* exp(-etout/(R*C)) / R + 5 * C * exp(-etout/(R*C)); %decay signal exact solution
-    error = max(abs(qcExact - eqout)); %redefinition doesn't seem to bother matlab. Also had to call exact function again.
+    [etout, eqout] = RK2(qcFunc, t0, qc0, step, a, tf);
+    
+    %*****************Exact Solutions of the 2 Input Signal******************
+    qcExact = ( exp(-etout/(R*C)) .* ( C^2 * w^2 * R^2 + 2000000 * C^2 * w * R * V * exp(etout/(R*C)) .* sin(w*etout) + 2000000 * C * V * exp(etout/(R*C)) .* cos(w*etout) - 2000000 * C * V + 1 ) ) ./ (2000000 * (C^2 * w^2 * R^2 + 1));
+%     qcExact = V * etout .* exp(-etout/(R*C)) / R + 2 * V * C * exp(-etout/(R*C));
+    %************************************************************************
+
+    error = max(abs(qcExact - eqout));
     p1 = plot(log(step), log(error), 'b*'); % doesn't seem to make a big difference doing log-log vs plot log.
     hold on; %10 iterations of plotting
     
@@ -95,11 +101,14 @@ a = 0.0;
 for i = 16:25
 
     step = 2^(-i); %Trying different step sizes (h).
-    [etout, eqout] = RK2(qcFunc, t0, qc0, step, a, tf); %RK2 functions with different step size h. added extra e for fun and syntax.
-%     qcExact = ( exp(-etout/(R*C)) .* ( C^2 * w^2 * R^2 + 2000000 * C^2 * w * R * V * exp(etout/(R*C)) .* sin(w*etout) + 2000000 * C * V * exp(etout/(R*C)) .* cos(w*etout) - 2000000 * C * V + 1 ) ) ./ (2000000 * (C^2 * w^2 * R^2 + 1));
-%     qcExact = 2.5 * C * ( 1 + exp(-etout/(R*C)) ); %step signal exact solution
-    qcExact = 2.5 * etout .* exp(-etout/(R*C)) / R + 5 * C * exp(-etout/(R*C)); %decay signal exact solution
-    error = max(abs(qcExact - eqout)); %redefinition doesn't seem to bother matlab. Also had to call exact function again.
+    [etout, eqout] = RK2(qcFunc, t0, qc0, step, a, tf);
+    
+    %*****************Exact Solutions of the 2 Input Signal******************
+    qcExact = ( exp(-etout/(R*C)) .* ( C^2 * w^2 * R^2 + 2000000 * C^2 * w * R * V * exp(etout/(R*C)) .* sin(w*etout) + 2000000 * C * V * exp(etout/(R*C)) .* cos(w*etout) - 2000000 * C * V + 1 ) ) ./ (2000000 * (C^2 * w^2 * R^2 + 1));
+%     qcExact = V * etout .* exp(-etout/(R*C)) / R + 2 * V * C * exp(-etout/(R*C));
+    %************************************************************************
+
+    error = max(abs(qcExact - eqout));
     p2 = plot(log(step), log(error), 'r*'); % doesn't seem to make a big difference doing log-log vs plot log.
     hold on; %10 iterations of plotting
     
@@ -112,11 +121,14 @@ a = 0.3;
 for i = 16:25
 
     step = 2^(-i); %Trying different step sizes (h).
-    [etout, eqout] = RK2(qcFunc, t0, qc0, step, a, tf); %RK2 functions with different step size h. added extra e for fun and syntax.
-%     qcExact = ( exp(-etout/(R*C)) .* ( C^2 * w^2 * R^2 + 2000000 * C^2 * w * R * V * exp(etout/(R*C)) .* sin(w*etout) + 2000000 * C * V * exp(etout/(R*C)) .* cos(w*etout) - 2000000 * C * V + 1 ) ) ./ (2000000 * (C^2 * w^2 * R^2 + 1));
-%     qcExact = 2.5 * C * ( 1 + exp(-etout/(R*C)) ); %step signal exact solution
-    qcExact = 2.5 * etout .* exp(-etout/(R*C)) / R + 5 * C * exp(-etout/(R*C)); %decay signal exact solution
-    error = max(abs(qcExact - eqout)); %redefinition doesn't seem to bother matlab. Also had to call exact function again.
+    [etout, eqout] = RK2(qcFunc, t0, qc0, step, a, tf);
+    
+    %*****************Exact Solutions of the 2 Input Signal******************
+    qcExact = ( exp(-etout/(R*C)) .* ( C^2 * w^2 * R^2 + 2000000 * C^2 * w * R * V * exp(etout/(R*C)) .* sin(w*etout) + 2000000 * C * V * exp(etout/(R*C)) .* cos(w*etout) - 2000000 * C * V + 1 ) ) ./ (2000000 * (C^2 * w^2 * R^2 + 1));
+%     qcExact = V * etout .* exp(-etout/(R*C)) / R + 2 * V * C * exp(-etout/(R*C));
+    %************************************************************************
+
+    error = max(abs(qcExact - eqout));
     p3 = plot(log(step), log(error), 'g*'); % doesn't seem to make a big difference doing log-log vs plot log.
     hold on; %10 iterations of plotting
 
@@ -136,11 +148,14 @@ a = 0.5;
 for i = 16:25
 
     step = 2^(-i); %Trying different step sizes (h).
-    [etout, eqout] = RK2(qcFunc, t0, qc0, step, a, tf); %RK2 functions with different step size h. added extra e for fun and syntax.
-%     qcExact = ( exp(-etout/(R*C)) .* ( C^2 * w^2 * R^2 + 2000000 * C^2 * w * R * V * exp(etout/(R*C)) .* sin(w*etout) + 2000000 * C * V * exp(etout/(R*C)) .* cos(w*etout) - 2000000 * C * V + 1 ) ) ./ (2000000 * (C^2 * w^2 * R^2 + 1));
-%     qcExact = 2.5 * C * ( 1 + exp(-etout/(R*C)) ); %step signal exact solution
-    qcExact = 2.5 * etout .* exp(-etout/(R*C)) / R + 5 * C * exp(-etout/(R*C)); %decay signal exact solution
-    error = max(abs(qcExact - eqout)); %redefinition doesn't seem to bother matlab. Also had to call exact function again.
+    [etout, eqout] = RK2(qcFunc, t0, qc0, step, a, tf);
+    
+    %*****************Exact Solutions of the 2 Input Signal******************
+    qcExact = ( exp(-etout/(R*C)) .* ( C^2 * w^2 * R^2 + 2000000 * C^2 * w * R * V * exp(etout/(R*C)) .* sin(w*etout) + 2000000 * C * V * exp(etout/(R*C)) .* cos(w*etout) - 2000000 * C * V + 1 ) ) ./ (2000000 * (C^2 * w^2 * R^2 + 1));
+%     qcExact = V * etout .* exp(-etout/(R*C)) / R + 2 * V * C * exp(-etout/(R*C));
+    %************************************************************************
+
+    error = max(abs(qcExact - eqout));
     p4 = plot(log(step), error, 'b*');
     hold on;
 end
@@ -151,11 +166,14 @@ a = 0.0;
 for i = 16:25
 
     step = 2^(-i); %Trying different step sizes (h).
-    [etout, eqout] = RK2(qcFunc, t0, qc0, step, a, tf); %RK2 functions with different step size h. added extra e for fun and syntax.
-%     qcExact = ( exp(-etout/(R*C)) .* ( C^2 * w^2 * R^2 + 2000000 * C^2 * w * R * V * exp(etout/(R*C)) .* sin(w*etout) + 2000000 * C * V * exp(etout/(R*C)) .* cos(w*etout) - 2000000 * C * V + 1 ) ) ./ (2000000 * (C^2 * w^2 * R^2 + 1));
-%     qcExact = 2.5 * C * ( 1 + exp(-etout/(R*C)) ); %step signal exact solution
-    qcExact = 2.5 * etout .* exp(-etout/(R*C)) / R + 5 * C * exp(-etout/(R*C)); %decay signal exact solution
-    error = max(abs(qcExact - eqout)); %redefinition doesn't seem to bother matlab. Also had to call exact function again.
+    [etout, eqout] = RK2(qcFunc, t0, qc0, step, a, tf);
+    
+    %*****************Exact Solutions of the 2 Input Signal******************
+    qcExact = ( exp(-etout/(R*C)) .* ( C^2 * w^2 * R^2 + 2000000 * C^2 * w * R * V * exp(etout/(R*C)) .* sin(w*etout) + 2000000 * C * V * exp(etout/(R*C)) .* cos(w*etout) - 2000000 * C * V + 1 ) ) ./ (2000000 * (C^2 * w^2 * R^2 + 1));
+%     qcExact = V * etout .* exp(-etout/(R*C)) / R + 2 * V * C * exp(-etout/(R*C));
+    %************************************************************************
+
+    error = max(abs(qcExact - eqout));
     p5 = plot(log(step), error, 'r*');
     hold on;
 end
@@ -166,11 +184,14 @@ a = 0.3;
 for i = 16:25
 
     step = 2^(-i); %Trying different step sizes (h).
-    [etout, eqout] = RK2(qcFunc, t0, qc0, step, a, tf); %RK2 functions with different step size h. added extra e for fun and syntax.
-%     qcExact = ( exp(-etout/(R*C)) .* ( C^2 * w^2 * R^2 + 2000000 * C^2 * w * R * V * exp(etout/(R*C)) .* sin(w*etout) + 2000000 * C * V * exp(etout/(R*C)) .* cos(w*etout) - 2000000 * C * V + 1 ) ) ./ (2000000 * (C^2 * w^2 * R^2 + 1));
-%     qcExact = 2.5 * C * ( 1 + exp(-etout/(R*C)) ); %step signal exact solution
-    qcExact = 2.5 * etout .* exp(-etout/(R*C)) / R + 5 * C * exp(-etout/(R*C)); %decay signal exact solution
-    error = max(abs(qcExact - eqout)); %redefinition doesn't seem to bother matlab. Also had to call exact function again.
+    [etout, eqout] = RK2(qcFunc, t0, qc0, step, a, tf);
+    
+    %*****************Exact Solutions of the 2 Input Signal******************
+    qcExact = ( exp(-etout/(R*C)) .* ( C^2 * w^2 * R^2 + 2000000 * C^2 * w * R * V * exp(etout/(R*C)) .* sin(w*etout) + 2000000 * C * V * exp(etout/(R*C)) .* cos(w*etout) - 2000000 * C * V + 1 ) ) ./ (2000000 * (C^2 * w^2 * R^2 + 1));
+%     qcExact = V * etout .* exp(-etout/(R*C)) / R + 2 * V * C * exp(-etout/(R*C));
+    %************************************************************************
+
+    error = max(abs(qcExact - eqout));
     p6 = plot(log(step), error, 'g*');
     hold on;
 end
