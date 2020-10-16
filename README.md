@@ -1,7 +1,7 @@
 # Numerical Analysis of Differential Equations using Matlab
 Group 25
 
-**Final Paper:** 
+**Final Paper:** https://github.com/crsren/NumericalAnalysis25/blob/master/numerical_analysis.pdf
 
 ## Abstract
 In the first part, different Runge-Kutta methods are used to model an RC circuit. In the second part, said methods are applied to RLC circuits. The third and last part implements the Relaxation method in order to model solutions to the Laplace equation.
